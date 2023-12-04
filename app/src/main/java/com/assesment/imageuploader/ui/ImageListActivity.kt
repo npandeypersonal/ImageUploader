@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.assesment.imageuploader.R
 import com.assesment.imageuploader.dataModel.model.ImageData
+import com.assesment.imageuploader.utils.ImageStatus
 import com.assesment.imageuploader.viewModel.ImageViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import java.io.File
@@ -38,6 +39,15 @@ class ImageListActivity : AppCompatActivity() {
             )
         }
         uploadButton.setOnClickListener{
+            val currentList = imageAdapter.getData()
+            val editedList = currentList.map { element ->
+                if (element.imageStatus == ImageStatus.Empty) {
+                    element.copy(imageStatus = ImageStatus.Uploading)
+                } else {
+                    element
+                }
+            }
+            refreshAdapterView(editedList)
             uploadViewModel = imageViewModel
             val serviceIntent = Intent(this, UploadService::class.java).apply {
                 putExtra(
@@ -46,22 +56,32 @@ class ImageListActivity : AppCompatActivity() {
                 )
             }
             startForegroundService(serviceIntent)
+
         }
         observeViewModel()
     }
 
+    private fun refreshAdapterView(currentList: List<ImageData>) {
+        imageAdapter.setData(currentList)
+        imageAdapter.notifyDataSetChanged()
+    }
+
     private fun observeViewModel() {
             imageViewModel.selectedImages.observe(this) {
-                println("selectedImages observer called :: $it")
-                        imageAdapter.setData(it)
-                        imageAdapter.notifyDataSetChanged()
+                        refreshAdapterView(it)
+            }
+            imageViewModel.uploadProgress.observe(this){data->
+                val currentList = imageViewModel.selectedImages.value as MutableList<ImageData>
+                val index = currentList.indexOfFirst { it.name == data.second.name && it.uri == data.second.uri }
+                 currentList[index] = data.second
+                refreshAdapterView(currentList)
             }
     }
 
     private fun initRecyclerview() {
         imageAdapter = ImageAdapter(emptyList())
         val recyclerView: RecyclerView = findViewById(R.id.recycler)
-        recyclerView.layoutManager = GridLayoutManager(this@ImageListActivity, 4)
+        recyclerView.layoutManager = GridLayoutManager(this@ImageListActivity, 2)
         recyclerView.adapter = imageAdapter
     }
 

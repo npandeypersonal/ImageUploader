@@ -26,8 +26,8 @@ class UploadService @Inject constructor() : LifecycleService() {
 
         // Observe the upload progress and update the notification
         ImageListActivity.uploadViewModel.uploadProgress.observe(this) { progress ->
-            updateNotification(progress)
-            if (imagePaths.size == progress){
+            updateNotification(progress.first)
+            if (imagePaths.size == progress.first){
                 stopForeground(STOP_FOREGROUND_DETACH)
                 stopSelf()
             }

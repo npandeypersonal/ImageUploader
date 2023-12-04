@@ -20,8 +20,8 @@ import javax.inject.Inject
 class ImageViewModel @Inject constructor(private val imageRepository: ImageRepository) : ViewModel() {
     private val _selectedImages = MutableLiveData<List<ImageData>>()
     val selectedImages: LiveData<List<ImageData>> get() = _selectedImages
-    private val _uploadProgress = MutableLiveData<Int>()
-    val uploadProgress: LiveData<Int> get() = _uploadProgress
+    private val _uploadProgress = MutableLiveData<Pair<Int, ImageData>>()
+    val uploadProgress: LiveData<Pair<Int, ImageData>> get() = _uploadProgress
     private val allList = mutableListOf<ImageData>()
 
     fun addImages(list: MutableList<ImageData>){
@@ -52,11 +52,11 @@ class ImageViewModel @Inject constructor(private val imageRepository: ImageRepos
                                 }
 
                                 filesUploaded++
-                               _uploadProgress.value = filesUploaded
+                               _uploadProgress.value = Pair(filesUploaded,imageData)
                             }catch (exception: Exception) {
                                 filesUploaded++
                                 updatedList.add(imageData.copy(imageStatus = ImageStatus.Failure))
-                                _uploadProgress.value = filesUploaded
+                                _uploadProgress.value = Pair(filesUploaded,imageData.copy(imageStatus = ImageStatus.Failure))
                                 Log.d("ImageViewModel", "$exception handled !")
                             }
                         }
