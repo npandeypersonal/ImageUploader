@@ -1,6 +1,5 @@
 package com.assesment.imageuploader.utils
 
-import com.assesment.imageuploader.dataModel.model.ImageData
 import java.io.Serializable
 
 sealed class ImageStatus : Serializable{

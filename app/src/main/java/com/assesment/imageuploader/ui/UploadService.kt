@@ -6,14 +6,11 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.content.pm.ServiceInfo.FOREGROUND_SERVICE_TYPE_DATA_SYNC
-import android.os.Build.VERSION.SDK_INT
 import android.os.IBinder
-import androidx.activity.viewModels
 import androidx.core.app.NotificationCompat
 import androidx.lifecycle.LifecycleService
 import com.assesment.imageuploader.R
 import com.assesment.imageuploader.dataModel.model.ImageData
-import com.assesment.imageuploader.viewModel.ImageViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
